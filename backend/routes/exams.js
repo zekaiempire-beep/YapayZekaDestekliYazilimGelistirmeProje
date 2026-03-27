@@ -1,6 +1,5 @@
 import { Router } from 'express'
-import { v4 as uuidv4 } from 'uuid'
-import { getQuestions, getResults, saveResults } from '../utils/storage.js'
+import prisma from '../utils/prisma.js'
 import { analyzeExamAnswers } from '../utils/claudeAnalyzer.js'
 
 const router = Router()
@@ -14,7 +13,9 @@ router.post('/submit', async (req, res) => {
       return res.status(400).json({ error: 'Geçersiz sınav verisi' })
     }
 
-    const questions = getQuestions(examId)
+    const questions = await prisma.question.findMany({
+      where: { examId }
+    })
 
     // Validasyonlar
     if (questions.length === 0) {
@@ -29,22 +30,26 @@ router.post('/submit', async (req, res) => {
     const result = await analyzeExamAnswers(questions, answers)
 
     // Sınav sonucunu kaydet
-    const results = getResults()
-    const examRecord = {
-      id: uuidv4(),
-      examId,
-      timestamp: new Date().toISOString(),
-      score: result.score,
-      totalQuestions: result.totalQuestions,
-      feedback: result.feedback,
-      answers: answers,
-    }
-
-    results.push(examRecord)
-    saveResults(results)
+    const examResult = await prisma.examResult.create({
+      data: {
+        examId,
+        score: result.score,
+        totalQuestions: result.totalQuestions,
+        feedback: result.feedback,
+        answers: {
+          create: answers.map(answer => ({
+            questionId: answer.questionId,
+            selectedAnswer: answer.selectedAnswer,
+          }))
+        }
+      },
+      include: {
+        answers: true
+      }
+    })
 
     res.json({
-      id: examRecord.id,
+      id: examResult.id,
       score: result.score,
       totalQuestions: result.totalQuestions,
       feedback: result.feedback,
@@ -58,22 +63,41 @@ router.post('/submit', async (req, res) => {
 })
 
 // Bir sınavın sonuçlarını getir
-router.get('/results/:examId', (req, res) => {
+router.get('/results/:examId', async (req, res) => {
   try {
     const { examId } = req.params
-    const results = getResults(examId)
+    const results = await prisma.examResult.findMany({
+      where: { examId },
+      include: {
+        answers: {
+          include: {
+            question: true
+          }
+        }
+      },
+      orderBy: { timestamp: 'desc' }
+    })
     res.json(results)
   } catch (error) {
+    console.error('Sonuçlar getirilemedi:', error)
     res.status(500).json({ error: 'Sonuçlar getirilemedi' })
   }
 })
 
 // Belirli sonucu getir
-router.get('/:resultId', (req, res) => {
+router.get('/:resultId', async (req, res) => {
   try {
     const { resultId } = req.params
-    const results = getResults()
-    const result = results.find((r) => r.id === resultId)
+    const result = await prisma.examResult.findUnique({
+      where: { id: resultId },
+      include: {
+        answers: {
+          include: {
+            question: true
+          }
+        }
+      }
+    })
 
     if (!result) {
       return res.status(404).json({ error: 'Sonuç bulunamadı' })
@@ -81,9 +105,11 @@ router.get('/:resultId', (req, res) => {
 
     res.json(result)
   } catch (error) {
+    console.error('Sonuç getirilemedi:', error)
     res.status(500).json({ error: 'Sonuç getirilemedi' })
   }
 })
 
 export default router
+
 

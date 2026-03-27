@@ -1,22 +1,25 @@
 import { Router } from 'express'
-import { v4 as uuidv4 } from 'uuid'
-import { getQuestions, saveQuestions, getExams, saveExams } from '../utils/storage.js'
+import prisma from '../utils/prisma.js'
 
 const router = Router()
 
 // Bir sınavın sorularını getir
-router.get('/exam/:examId', (req, res) => {
+router.get('/exam/:examId', async (req, res) => {
   try {
     const { examId } = req.params
-    const questions = getQuestions(examId)
+    const questions = await prisma.question.findMany({
+      where: { examId },
+      orderBy: { createdAt: 'asc' }
+    })
     res.json(questions)
   } catch (error) {
+    console.error('Sorular getirilemedi:', error)
     res.status(500).json({ error: 'Sorular getirilemedi' })
   }
 })
 
 // Yeni soru ekle
-router.post('/', (req, res) => {
+router.post('/', async (req, res) => {
   try {
     const { examId, text, options, correctAnswer } = req.body
 
@@ -30,36 +33,29 @@ router.post('/', (req, res) => {
     }
 
     // Sınavın var olduğunu kontrol et
-    const exams = getExams()
-    const examExists = exams.find((e) => e.id === examId)
-    if (!examExists) {
+    const exam = await prisma.exam.findUnique({ where: { id: examId } })
+    if (!exam) {
       return res.status(404).json({ error: 'Sınav bulunamadı' })
     }
 
-    const questions = getQuestions()
-    const newQuestion = {
-      id: uuidv4(),
-      examId,
-      text,
-      options,
-      correctAnswer,
-    }
-
-    questions.push(newQuestion)
-    saveQuestions(questions)
-
-    // Sınav soru sayısını güncelle
-    examExists.questionCount = questions.filter((q) => q.examId === examId).length
-    saveExams(exams)
+    const newQuestion = await prisma.question.create({
+      data: {
+        examId,
+        text,
+        options,
+        correctAnswer,
+      }
+    })
 
     res.status(201).json(newQuestion)
   } catch (error) {
+    console.error('Soru eklenemedi:', error)
     res.status(500).json({ error: 'Soru eklenemedi' })
   }
 })
 
 // Soruyu güncelle
-router.put('/:id', (req, res) => {
+router.put('/:id', async (req, res) => {
   try {
     const { id } = req.params
     const { text, options, correctAnswer } = req.body
@@ -69,54 +65,45 @@ router.put('/:id', (req, res) => {
       return res.status(400).json({ error: 'Geçersiz soru verisi' })
     }
 
-    const questions = getQuestions()
-    const questionIndex = questions.findIndex((q) => q.id === id)
-
-    if (questionIndex === -1) {
+    const question = await prisma.question.findUnique({ where: { id } })
+    if (!question) {
       return res.status(404).json({ error: 'Soru bulunamadı' })
     }
 
-    questions[questionIndex] = {
-      ...questions[questionIndex],
-      text,
-      options,
-      correctAnswer,
-    }
-    saveQuestions(questions)
+    const updatedQuestion = await prisma.question.update({
+      where: { id },
+      data: {
+        text,
+        options,
+        correctAnswer,
+      }
+    })
 
-    res.json(questions[questionIndex])
+    res.json(updatedQuestion)
   } catch (error) {
+    console.error('Soru güncellenemedi:', error)
     res.status(500).json({ error: 'Soru güncellenemedi' })
   }
 })
 
 // Soruyu sil
-router.delete('/:id', (req, res) => {
+router.delete('/:id', async (req, res) => {
   try {
     const { id } = req.params
-    const questions = getQuestions()
-    const question = questions.find((q) => q.id === id)
 
+    const question = await prisma.question.findUnique({ where: { id } })
     if (!question) {
       return res.status(404).json({ error: 'Soru bulunamadı' })
     }
 
-    const filteredQuestions = questions.filter((q) => q.id !== id)
-    saveQuestions(filteredQuestions)
-
-    // Sınav soru sayısını güncelle
-    const exams = getExams()
-    const exam = exams.find((e) => e.id === question.examId)
-    if (exam) {
-      exam.questionCount = filteredQuestions.filter((q) => q.examId === question.examId).length
-      saveExams(exams)
-    }
-
+    await prisma.question.delete({ where: { id } })
     res.json({ message: 'Soru silindi' })
   } catch (error) {
+    console.error('Soru silinemedi:', error)
     res.status(500).json({ error: 'Soru silinemedi' })
   }
 })
 
 export default router
+
 

@@ -1,21 +1,34 @@
 import { Router } from 'express'
-import { v4 as uuidv4 } from 'uuid'
-import { getExams, saveExams, getQuestions, saveQuestions } from '../utils/storage.js'
+import prisma from '../utils/prisma.js'
 
 const router = Router()
 
 // Tüm sınavları getir
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
   try {
-    const exams = getExams()
-    res.json(exams)
+    const exams = await prisma.exam.findMany({
+      include: {
+        _count: {
+          select: { questions: true }
+        }
+      },
+      orderBy: { createdAt: 'desc' }
+    })
+
+    const formattedExams = exams.map(exam => ({
+      ...exam,
+      questionCount: exam._count.questions
+    }))
+
+    res.json(formattedExams)
   } catch (error) {
+    console.error('Sınavlar getirilemedi:', error)
     res.status(500).json({ error: 'Sınavlar getirilemedi' })
   }
 })
 
 // Yeni sınav oluştur
-router.post('/', (req, res) => {
+router.post('/', async (req, res) => {
   try {
     const { title, description } = req.body
 
@@ -23,72 +36,67 @@ router.post('/', (req, res) => {
       return res.status(400).json({ error: 'Sınav adı gereklidir' })
     }
 
-    const exams = getExams()
-    const newExam = {
-      id: uuidv4(),
-      title,
-      description: description || '',
-      createdAt: new Date().toISOString(),
-      questionCount: 0,
-    }
+    const newExam = await prisma.exam.create({
+      data: {
+        title,
+        description: description || '',
+      }
+    })
 
-    exams.push(newExam)
-    saveExams(exams)
-
-    res.status(201).json(newExam)
+    res.status(201).json({ ...newExam, questionCount: 0 })
   } catch (error) {
+    console.error('Sınav oluşturulamadı:', error)
     res.status(500).json({ error: 'Sınav oluşturulamadı' })
   }
 })
 
 // Sınavı güncelle
-router.put('/:id', (req, res) => {
+router.put('/:id', async (req, res) => {
   try {
     const { id } = req.params
     const { title, description } = req.body
 
-    const exams = getExams()
-    const examIndex = exams.findIndex((e) => e.id === id)
-
-    if (examIndex === -1) {
+    const exam = await prisma.exam.findUnique({ where: { id } })
+    if (!exam) {
       return res.status(404).json({ error: 'Sınav bulunamadı' })
     }
 
-    exams[examIndex] = {
-      ...exams[examIndex],
-      title: title || exams[examIndex].title,
-      description: description !== undefined ? description : exams[examIndex].description,
-    }
+    const updatedExam = await prisma.exam.update({
+      where: { id },
+      data: {
+        title: title || exam.title,
+        description: description !== undefined ? description : exam.description,
+      }
+    })
 
-    saveExams(exams)
-    res.json(exams[examIndex])
+    res.json(updatedExam)
   } catch (error) {
+    console.error('Sınav güncellenemedi:', error)
     res.status(500).json({ error: 'Sınav güncellenemedi' })
   }
 })
 
 // Sınavı sil
-router.delete('/:id', (req, res) => {
+router.delete('/:id', async (req, res) => {
   try {
     const { id } = req.params
 
-    const exams = getExams()
-    const filteredExams = exams.filter((e) => e.id !== id)
+    const exam = await prisma.exam.findUnique({ 
+      where: { id },
+      include: { questions: true }
+    })
 
-    if (filteredExams.length === exams.length) {
+    if (!exam) {
       return res.status(404).json({ error: 'Sınav bulunamadı' })
     }
 
-    // Sınava ait soruları da sil
-    const questions = getQuestions()
-    const filteredQuestions = questions.filter((q) => q.examId !== id)
-    saveQuestions(filteredQuestions)
-
-    saveExams(filteredExams)
+    await prisma.exam.delete({ where: { id } })
     res.json({ message: 'Sınav silindi' })
   } catch (error) {
+    console.error('Sınav silinemedi:', error)
     res.status(500).json({ error: 'Sınav silinemedi' })
   }
 })
 
 export default router
+

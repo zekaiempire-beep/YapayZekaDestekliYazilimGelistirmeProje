@@ -44,5 +44,17 @@
       "3"
     ],
     "correctAnswer": 0
+  },
+  {
+    "id": "ab598fe3-2c6b-4ae9-9010-3c1c4945e2a3",
+    "examId": "3dc12730-b156-46ce-921f-8646c69f8cac",
+    "text": "10+10",
+    "options": [
+      "20",
+      "32",
+      "32",
+      "2"
+    ],
+    "correctAnswer": 0
   }
 ]
