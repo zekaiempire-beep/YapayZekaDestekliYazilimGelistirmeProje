@@ -1,13 +1,14 @@
 import { Router } from 'express'
 import { v4 as uuidv4 } from 'uuid'
-import { getQuestions, saveQuestions } from '../utils/storage.js'
+import { getQuestions, saveQuestions, getExams, saveExams } from '../utils/storage.js'
 
 const router = Router()
 
-// Tüm soruları getir
-router.get('/', (req, res) => {
+// Bir sınavın sorularını getir
+router.get('/exam/:examId', (req, res) => {
   try {
-    const questions = getQuestions()
+    const { examId } = req.params
+    const questions = getQuestions(examId)
     res.json(questions)
   } catch (error) {
     res.status(500).json({ error: 'Sorular getirilemedi' })
@@ -17,10 +18,10 @@ router.get('/', (req, res) => {
 // Yeni soru ekle
 router.post('/', (req, res) => {
   try {
-    const { text, options, correctAnswer } = req.body
+    const { examId, text, options, correctAnswer } = req.body
 
     // Validasyon
-    if (!text || !options || options.length !== 4 || correctAnswer === undefined) {
+    if (!examId || !text || !options || options.length !== 4 || correctAnswer === undefined) {
       return res.status(400).json({ error: 'Geçersiz soru verisi' })
     }
 
@@ -28,9 +29,17 @@ router.post('/', (req, res) => {
       return res.status(400).json({ error: 'Geçersiz doğru cevap indeksi' })
     }
 
+    // Sınavın var olduğunu kontrol et
+    const exams = getExams()
+    const examExists = exams.find((e) => e.id === examId)
+    if (!examExists) {
+      return res.status(404).json({ error: 'Sınav bulunamadı' })
+    }
+
     const questions = getQuestions()
     const newQuestion = {
       id: uuidv4(),
+      examId,
       text,
       options,
       correctAnswer,
@@ -38,6 +47,10 @@ router.post('/', (req, res) => {
 
     questions.push(newQuestion)
     saveQuestions(questions)
+
+    // Sınav soru sayısını güncelle
+    examExists.questionCount = questions.filter((q) => q.examId === examId).length
+    saveExams(exams)
 
     res.status(201).json(newQuestion)
   } catch (error) {
@@ -63,7 +76,12 @@ router.put('/:id', (req, res) => {
       return res.status(404).json({ error: 'Soru bulunamadı' })
     }
 
-    questions[questionIndex] = { id, text, options, correctAnswer }
+    questions[questionIndex] = {
+      ...questions[questionIndex],
+      text,
+      options,
+      correctAnswer,
+    }
     saveQuestions(questions)
 
     res.json(questions[questionIndex])
@@ -77,13 +95,23 @@ router.delete('/:id', (req, res) => {
   try {
     const { id } = req.params
     const questions = getQuestions()
-    const filteredQuestions = questions.filter((q) => q.id !== id)
+    const question = questions.find((q) => q.id === id)
 
-    if (filteredQuestions.length === questions.length) {
+    if (!question) {
       return res.status(404).json({ error: 'Soru bulunamadı' })
     }
 
+    const filteredQuestions = questions.filter((q) => q.id !== id)
     saveQuestions(filteredQuestions)
+
+    // Sınav soru sayısını güncelle
+    const exams = getExams()
+    const exam = exams.find((e) => e.id === question.examId)
+    if (exam) {
+      exam.questionCount = filteredQuestions.filter((q) => q.examId === question.examId).length
+      saveExams(exams)
+    }
+
     res.json({ message: 'Soru silindi' })
   } catch (error) {
     res.status(500).json({ error: 'Soru silinemedi' })
@@ -91,3 +119,4 @@ router.delete('/:id', (req, res) => {
 })
 
 export default router
+
