@@ -6,38 +6,42 @@
 
 ### ✅ Yeni Dosyalar Oluşturuldu
 
-| Dosya | Açıklama |
-|-------|-----------|
+| Dosya                             | Açıklama                                 |
+| --------------------------------- | ---------------------------------------- |
 | `backend/utils/ollamaAnalyzer.js` | Ollama API entegrasyonu ve sınav analizi |
-| `OLLAMA_SETUP.md` | Ollama kurulum rehberi |
-| `API_DOCS.md` | API belgeleri ve örnekler |
-| `OLLAMA_QUICK_START.md` | Hızlı başlangıç rehberi |
-| `test-ollama.sh` | Linux/Mac test scripti |
-| `test-ollama.bat` | Windows test scripti |
+| `OLLAMA_SETUP.md`                 | Ollama kurulum rehberi                   |
+| `API_DOCS.md`                     | API belgeleri ve örnekler                |
+| `OLLAMA_QUICK_START.md`           | Hızlı başlangıç rehberi                  |
+| `test-ollama.sh`                  | Linux/Mac test scripti                   |
+| `test-ollama.bat`                 | Windows test scripti                     |
 
 ### 🔧 Değiştirilen Dosyalar
 
-| Dosya | Değişiklikler |
-|-------|----------------|
+| Dosya                     | Değişiklikler                                                                           |
+| ------------------------- | --------------------------------------------------------------------------------------- |
 | `backend/routes/exams.js` | Import eklendi, `/submit` route'u güncelleştirildi, `/health/ollama` endpoint'i eklendi |
-| `backend/.env.example` | OLLAMA_URL ve OLLAMA_MODEL ayarları eklendi |
+| `backend/.env.example`    | OLLAMA_URL ve OLLAMA_MODEL ayarları eklendi                                             |
 
 ---
 
 ## 🎯 Eklenen Özellikler
 
 ### 1. Ollama Analyzer Fonksiyonu
+
 ```javascript
-analyzeExamAnswersWithOllama(questions, answers, model)
+analyzeExamAnswersWithOllama(questions, answers, model);
 ```
+
 - Öğrenci cevaplarını analiz eder
 - Detaylı geri bildirim oluşturur
 - Hata yönetimi ile fallback yanıt sağlar
 
 ### 2. Bağlantı Kontrolü
+
 ```javascript
-checkOllamaConnection()
+checkOllamaConnection();
 ```
+
 - Ollama sunucusunun durumunu kontrol eder
 - Yüklü modelleri listeler
 - Bağlantı hatalarını anlamlı mesajlarla gösterir
@@ -45,6 +49,7 @@ checkOllamaConnection()
 ### 3. API Endpoints
 
 #### POST /api/exams/submit
+
 ```json
 {
   "examId": "exam-1",
@@ -54,6 +59,7 @@ checkOllamaConnection()
 ```
 
 #### GET /api/exams/health/ollama
+
 ```json
 {
   "connected": true,
@@ -66,14 +72,14 @@ checkOllamaConnection()
 
 ## 📊 Özellik Karşılaştırması
 
-| Özellik | Önceki (Gemini) | Yeni (Ollama) |
-|---------|-----------------|---------------|
-| API Anahtarı Gerekli | ✅ Evet | ❌ Hayır |
-| İnternet Gerekli | ✅ Evet | ❌ Hayır |
-| Kurulum Gerekli | ❌ Hayır | ✅ Evet |
-| Ücretsiz | ✅ (Sınırlı) | ✅ Tamamen |
-| Model Seçimi | Sabit | Değiştirilebilir |
-| Çalışma Hızı | Düşük | Yüksek |
+| Özellik              | Önceki (Gemini) | Yeni (Ollama)    |
+| -------------------- | --------------- | ---------------- |
+| API Anahtarı Gerekli | ✅ Evet         | ❌ Hayır         |
+| İnternet Gerekli     | ✅ Evet         | ❌ Hayır         |
+| Kurulum Gerekli      | ❌ Hayır        | ✅ Evet          |
+| Ücretsiz             | ✅ (Sınırlı)    | ✅ Tamamen       |
+| Model Seçimi         | Sabit           | Değiştirilebilir |
+| Çalışma Hızı         | Düşük           | Yüksek           |
 
 ---
 
@@ -92,6 +98,7 @@ checkOllamaConnection()
 ## 💻 Komuş İçin Hızlı Komutlar
 
 ### Ollama Model İndirme
+
 ```bash
 ollama pull mistral        # Önerilir
 ollama pull llama2         # Daha güçlü
@@ -100,12 +107,14 @@ ollama pull tinyllama      # Test için hafif
 ```
 
 ### Durum Kontrol
+
 ```bash
 ollama list        # Yüklü modelleri göster
 ollama serve       # Ollama'yı başlat
 ```
 
 ### API Test
+
 ```bash
 # Bağlantı kontrol
 curl http://localhost:3000/api/exams/health/ollama
@@ -121,17 +130,20 @@ curl -X POST http://localhost:3000/api/exams/submit \
 ## 📝 Teknik Detaylar
 
 ### Ollama API Entegrasyonu
+
 - **Endpoint**: `http://localhost:11434/api/generate`
 - **Method**: POST
 - **Model Support**: Tüm Ollama modelleri
 - **Timeout**: Varsayılan (genellikle 30-60 saniye)
 
 ### Hata Yönetimi
+
 1. Ollama bağlantısı başarısız → Fallback yazı yanıtını döndür
 2. API timeout → Mock feedback sağla
 3. Model bulunamadı → Hata mesajı ile port sonlandır
 
 ### Performans
+
 - Mistral Model: ~5-15 saniye (ilk çalışmada)
 - Ardışık çalışmalar: ~2-5 saniye
 - GPT-like sonuç: Yeterli kalite

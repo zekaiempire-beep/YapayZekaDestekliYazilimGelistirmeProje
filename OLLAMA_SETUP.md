@@ -9,15 +9,18 @@ Ollama, yerel bilgisayarınızda çalışan açık kaynak bir LLM (Large Languag
 ## 1. Ollama'yı İndir ve Yükle
 
 ### Windows
+
 - [Ollama Windows İndir](https://ollama.com/download/windows)
 - İndirilen dosyayı çalıştırarak yükleyin
 - Yükleme tamamlanmadan sonra sistem yeniden başlatılacaktır
 
 ### macOS
+
 - [Ollama macOS İndir](https://ollama.com/download/mac)
 - İndirilen dosyayı **Uygulamalar** klasörüne sürükleyin
 
 ### Linux
+
 ```bash
 curl https://ollama.ai/install.sh | sh
 ```
@@ -38,21 +41,25 @@ Eğer yanıt alırsan, Ollama başarıyla çalışıyor demektir.
 Backend'den modelleri kullanabilmek için modeli Ollama'ya indirmeniz gerekir. Popüler modeller:
 
 ### Mistral (Önerilir - Hızlı ve Verimli)
+
 ```bash
 ollama pull mistral
 ```
 
 ### Llama 2 (Daha Güçlü Ama Yavaş)
+
 ```bash
 ollama pull llama2
 ```
 
 ### Neural Chat (Açık Alan Konuşması için İyi)
+
 ```bash
 ollama pull neural-chat
 ```
 
 Hangi modeli seçtiğinizi öğrenebilirsiniz:
+
 ```bash
 ollama list
 ```
@@ -87,6 +94,7 @@ curl http://localhost:3000/api/exams/health/ollama
 ```
 
 Başarılı yanıt örneği:
+
 ```json
 {
   "connected": true,
@@ -111,6 +119,7 @@ curl -X POST http://localhost:3000/api/exams/submit \
 ```
 
 **Parametreler:**
+
 - `examId`: Sınavın kimliği (zorunlu)
 - `answers`: Öğrencinin cevapları (zorunlu)
 - `analyzer`: "ollama" veya "gemini" (varsayılan: "ollama")
@@ -122,14 +131,14 @@ Frontend'den sınav sonuçlarını göndermek için `analyzer` parametresini dah
 ```javascript
 // JavaScript örneği
 const submitExam = async (examId, answers) => {
-  const response = await fetch('/api/exams/submit', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+  const response = await fetch("/api/exams/submit", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       examId,
       answers,
-      analyzer: 'ollama' // Ollama'yı kullan
-    })
+      analyzer: "ollama", // Ollama'yı kullan
+    }),
   });
 
   return response.json();
@@ -139,30 +148,35 @@ const submitExam = async (examId, answers) => {
 ## Sorun Giderme
 
 ### "Ollama sunucusu yanıt vermedi" hatası
+
 1. Ollama'nın çalışıp çalışmadığını kontrol et: `ollama serve`
 2. `OLLAMA_URL` doğru mu kontrol et
 3. Firewall ayarlarını kontrol et
 
 ### Model yüklenmedi hatası
+
 Model indirmek için:
+
 ```bash
 ollama pull mistral
 ```
 
 ### Memory/Ram sorunları
+
 Daha küçük bir model deneyin:
+
 ```bash
 ollama pull tinyllama
 ```
 
 ## Model Önerileri
 
-| Model | Hız | Kalite | RAM | Tavsiye |
-|-------|-----|--------|-----|---------|
-| tinyllama | ⭐⭐⭐⭐⭐ | ⭐ | 2GB | Test Amaçlı |
-| mistral | ⭐⭐⭐⭐ | ⭐⭐⭐⭐ | 7GB | En İyi (Önerilir) |
-| neural-chat | ⭐⭐⭐ | ⭐⭐⭐⭐⭐ | 13GB | Yüksek Kalite |
-| llama2 | ⭐⭐⭐ | ⭐⭐⭐⭐ | 7GB | Genel Amaçlı |
+| Model       | Hız        | Kalite     | RAM  | Tavsiye           |
+| ----------- | ---------- | ---------- | ---- | ----------------- |
+| tinyllama   | ⭐⭐⭐⭐⭐ | ⭐         | 2GB  | Test Amaçlı       |
+| mistral     | ⭐⭐⭐⭐   | ⭐⭐⭐⭐   | 7GB  | En İyi (Önerilir) |
+| neural-chat | ⭐⭐⭐     | ⭐⭐⭐⭐⭐ | 13GB | Yüksek Kalite     |
+| llama2      | ⭐⭐⭐     | ⭐⭐⭐⭐   | 7GB  | Genel Amaçlı      |
 
 ## Sonraki Adımlar
 

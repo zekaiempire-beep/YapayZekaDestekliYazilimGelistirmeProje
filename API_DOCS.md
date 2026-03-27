@@ -3,6 +3,7 @@
 ## Sınav Sonuçları Gönder
 
 ### Endpoint
+
 ```
 POST /api/exams/submit
 ```
@@ -28,13 +29,13 @@ POST /api/exams/submit
 
 #### Parametreler
 
-| Alan | Tür | Zorunlu | Açıklama |
-|------|-----|---------|-----------|
-| `examId` | string | ✅ Yes | Sınavın kimliği |
-| `answers` | array | ✅ Yes | Öğrencinin cevapları |
-| `answers[].questionId` | number | ✅ Yes | Sorunun kimliği |
-| `answers[].selectedAnswer` | number | ✅ Yes | Seçilen cevap indeksi (0-3) |
-| `analyzer` | string | ❌ No | Analiz aracı: "ollama" (varsayılan) veya "gemini" |
+| Alan                       | Tür    | Zorunlu | Açıklama                                          |
+| -------------------------- | ------ | ------- | ------------------------------------------------- |
+| `examId`                   | string | ✅ Yes  | Sınavın kimliği                                   |
+| `answers`                  | array  | ✅ Yes  | Öğrencinin cevapları                              |
+| `answers[].questionId`     | number | ✅ Yes  | Sorunun kimliği                                   |
+| `answers[].selectedAnswer` | number | ✅ Yes  | Seçilen cevap indeksi (0-3)                       |
+| `analyzer`                 | string | ❌ No   | Analiz aracı: "ollama" (varsayılan) veya "gemini" |
 
 ### Başarılı Yanıt (200)
 
@@ -50,6 +51,7 @@ POST /api/exams/submit
 ### Hata Yanıtları
 
 #### 400 Bad Request
+
 ```json
 {
   "error": "Geçersiz sınav verisi"
@@ -57,6 +59,7 @@ POST /api/exams/submit
 ```
 
 #### 404 Not Found
+
 ```json
 {
   "error": "Bu sınav için soru bulunamadı"
@@ -64,6 +67,7 @@ POST /api/exams/submit
 ```
 
 #### 500 Server Error
+
 ```json
 {
   "error": "Sınav işlenemedi. Lütfen daha sonra tekrar deneyin."
@@ -73,11 +77,13 @@ POST /api/exams/submit
 ## Sınav Sonuçlarını Getir
 
 ### Endpoint
+
 ```
 GET /api/exams/results/:examId
 ```
 
 ### Başarılı Yanıt
+
 ```json
 [
   {
@@ -101,11 +107,13 @@ GET /api/exams/results/:examId
 ## Ollama Bağlantısını Kontrol Et
 
 ### Endpoint
+
 ```
 GET /api/exams/health/ollama
 ```
 
 ### Başarılı Yanıt
+
 ```json
 {
   "connected": true,
@@ -115,6 +123,7 @@ GET /api/exams/health/ollama
 ```
 
 ### Başarısız Yanıt
+
 ```json
 {
   "connected": false,
@@ -126,6 +135,7 @@ GET /api/exams/health/ollama
 ## Frontend Örneği
 
 ### React/TypeScript
+
 ```typescript
 interface SubmitExamRequest {
   examId: string;
@@ -133,21 +143,21 @@ interface SubmitExamRequest {
     questionId: number;
     selectedAnswer: number;
   }>;
-  analyzer?: 'ollama' | 'gemini';
+  analyzer?: "ollama" | "gemini";
 }
 
 const submitExam = async (data: SubmitExamRequest) => {
-  const response = await fetch('/api/exams/submit', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+  const response = await fetch("/api/exams/submit", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       ...data,
-      analyzer: data.analyzer || 'ollama'
-    })
+      analyzer: data.analyzer || "ollama",
+    }),
   });
 
   if (!response.ok) {
-    throw new Error('Sınav gönderilemedi');
+    throw new Error("Sınav gönderilemedi");
   }
 
   return response.json();
@@ -155,33 +165,34 @@ const submitExam = async (data: SubmitExamRequest) => {
 
 // Kullanım
 const result = await submitExam({
-  examId: 'exam-123',
+  examId: "exam-123",
   answers: [
     { questionId: 1, selectedAnswer: 0 },
-    { questionId: 2, selectedAnswer: 2 }
+    { questionId: 2, selectedAnswer: 2 },
   ],
-  analyzer: 'ollama'
+  analyzer: "ollama",
 });
 ```
 
 ### JavaScript (Vanilla)
+
 ```javascript
-async function submitExam(examId, answers, analyzer = 'ollama') {
-  const response = await fetch('/api/exams/submit', {
-    method: 'POST',
+async function submitExam(examId, answers, analyzer = "ollama") {
+  const response = await fetch("/api/exams/submit", {
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json'
+      "Content-Type": "application/json",
     },
     body: JSON.stringify({
       examId,
       answers,
-      analyzer
-    })
+      analyzer,
+    }),
   });
 
   if (!response.ok) {
     const error = await response.json();
-    throw new Error(error.error || 'Sınav gönderilemedi');
+    throw new Error(error.error || "Sınav gönderilemedi");
   }
 
   return response.json();
@@ -189,27 +200,33 @@ async function submitExam(examId, answers, analyzer = 'ollama') {
 
 // Kullanım
 try {
-  const result = await submitExam('exam-123', [
-    { questionId: 1, selectedAnswer: 0 },
-    { questionId: 2, selectedAnswer: 2 }
-  ], 'ollama');
-  
-  console.log('Başarı Oranı:', result.score, '/', result.totalQuestions);
-  console.log('Geri Bildirim:', result.feedback);
+  const result = await submitExam(
+    "exam-123",
+    [
+      { questionId: 1, selectedAnswer: 0 },
+      { questionId: 2, selectedAnswer: 2 },
+    ],
+    "ollama",
+  );
+
+  console.log("Başarı Oranı:", result.score, "/", result.totalQuestions);
+  console.log("Geri Bildirim:", result.feedback);
 } catch (error) {
-  console.error('Hata:', error.message);
+  console.error("Hata:", error.message);
 }
 ```
 
 ## Analyzer Seçeneği
 
 ### Ollama (Varsayılan)
+
 - ✅ Yerel çalışır, API anahtarı gerekli değil
 - ✅ Tamamen offline
 - ✅ Daha hızlı yanıt (genellikle)
 - ❌ Sunucunun kurulu olması gerekir
 
 ### Gemini
+
 - ✅ Cloud tabanlı, kurulum gerekmez
 - ✅ Daha güçlü modeller
 - ❌ API anahtarı gerekli
@@ -223,18 +240,18 @@ Frontend'de hata yönetimi şu şekilde yapılmalıdır:
 async function handleExamSubmit(examId, answers) {
   try {
     // Ollama ile dene
-    const result = await submitExam(examId, answers, 'ollama');
+    const result = await submitExam(examId, answers, "ollama");
     return result;
   } catch (error) {
-    console.warn('Ollama hata:', error.message);
-    
+    console.warn("Ollama hata:", error.message);
+
     // Ollama başarısız olursa Gemini'ye geç
     try {
-      const result = await submitExam(examId, answers, 'gemini');
-      console.log('Gemini kullanıldı');
+      const result = await submitExam(examId, answers, "gemini");
+      console.log("Gemini kullanıldı");
       return result;
     } catch (error) {
-      console.error('Her iki analyzer da başarısız:', error.message);
+      console.error("Her iki analyzer da başarısız:", error.message);
       // Kullanıcıya hata mesajını göster
       throw error;
     }
@@ -247,19 +264,19 @@ async function handleExamSubmit(examId, answers) {
 ```javascript
 async function checkOllamaStatus() {
   try {
-    const response = await fetch('/api/exams/health/ollama');
+    const response = await fetch("/api/exams/health/ollama");
     const status = await response.json();
 
     if (status.connected) {
-      console.log('✅ Ollama çalışıyor');
-      console.log('Yüklü modeller:', status.models);
+      console.log("✅ Ollama çalışıyor");
+      console.log("Yüklü modeller:", status.models);
       return true;
     } else {
-      console.log('❌ Ollama bağlanamadı:', status.error);
+      console.log("❌ Ollama bağlanamadı:", status.error);
       return false;
     }
   } catch (error) {
-    console.error('Ollama durumu kontrol edilemedi:', error);
+    console.error("Ollama durumu kontrol edilemedi:", error);
     return false;
   }
 }
