@@ -26,6 +26,7 @@ model Question {
   examId         String
   exam           Exam     @relation(fields: [examId], references: [id], onDelete: Cascade)
   text           String
+  topic          String?  // Konu adı (örn: "Cebir", "Tarih", "Biyoloji")
   options        String[] // JSON array olarak saklanır
   correctAnswer  Int
   createdAt      DateTime @default(now())

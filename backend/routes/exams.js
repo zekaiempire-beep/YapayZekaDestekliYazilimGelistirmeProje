@@ -1,13 +1,14 @@
 import { Router } from 'express'
 import prisma from '../utils/prisma.js'
 import { analyzeExamAnswers } from '../utils/claudeAnalyzer.js'
+import { analyzeExamAnswersWithOllama, checkOllamaConnection } from '../utils/ollamaAnalyzer.js'
 
 const router = Router()
 
 // Sınav sonuçlarını gönder
 router.post('/submit', async (req, res) => {
   try {
-    const { examId, answers } = req.body
+    const { examId, answers, analyzer = 'ollama' } = req.body
 
     if (!examId || !answers || !Array.isArray(answers)) {
       return res.status(400).json({ error: 'Geçersiz sınav verisi' })
@@ -26,8 +27,13 @@ router.post('/submit', async (req, res) => {
       return res.status(400).json({ error: 'Tüm sorulara cevap vermelisiniz' })
     }
 
-    // Claude'a analiz ettir
-    const result = await analyzeExamAnswers(questions, answers)
+    // Seçilen analiz aracını kullan
+    let result
+    if (analyzer === 'ollama') {
+      result = await analyzeExamAnswersWithOllama(questions, answers)
+    } else {
+      result = await analyzeExamAnswers(questions, answers)
+    }
 
     // Sınav sonucunu kaydet
     const examResult = await prisma.examResult.create({
@@ -111,5 +117,15 @@ router.get('/:resultId', async (req, res) => {
 })
 
 export default router
+
+// Ollama bağlantısını kontrol et
+router.get('/health/ollama', async (req, res) => {
+  try {
+    const status = await checkOllamaConnection()
+    res.json(status)
+  } catch (error) {
+    res.status(500).json({ connected: false, error: error.message })
+  }
+})
 
 
