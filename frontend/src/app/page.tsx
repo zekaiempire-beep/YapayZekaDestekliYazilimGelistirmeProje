@@ -27,6 +27,11 @@ export default function Home() {
             >
               Aday Girişi
             </button>
+            <Link href="/results">
+              <button className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-4 rounded-lg transition">
+                📊 Sonuçlarımı Görüntüle
+              </button>
+            </Link>
           </div>
         ) : (
           <div>
@@ -43,11 +48,18 @@ export default function Home() {
                 </button>
               </Link>
             ) : (
-              <Link href="/exam">
-                <button className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-4 rounded-lg transition">
-                  Sınava Başla
-                </button>
-              </Link>
+              <div className="space-y-3">
+                <Link href="/exam">
+                  <button className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-4 rounded-lg transition">
+                    Sınava Başla
+                  </button>
+                </Link>
+                <Link href="/results">
+                  <button className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-4 rounded-lg transition">
+                    📊 Önceki Sonuçlarım
+                  </button>
+                </Link>
+              </div>
             )}
           </div>
         )}

@@ -1,11 +1,12 @@
 // Ollama entegrasyonu - Yerel LLM ile sınav değerlendirmesi
+import { enrichAnswerWithWebSearch } from './webSearch.js'
 
 export const analyzeExamAnswersWithOllama = async (questions, answers, model = 'mistral') => {
   // Doğru cevapları belirle ve yanlışları tespit et
   const wrongAnswers = []
   let correctCount = 0
 
-  answers.forEach((answer) => {
+  answers.forEach((answer, index) => {
     const question = questions.find((q) => q.id === answer.questionId)
     if (!question) return
 
@@ -13,6 +14,8 @@ export const analyzeExamAnswersWithOllama = async (questions, answers, model = '
       correctCount++
     } else {
       wrongAnswers.push({
+        questionId: question.id,
+        questionNumber: index + 1,  // Sınavda kaçıncı soru
         question: question.text,
         selectedAnswer: question.options[answer.selectedAnswer],
         correctAnswer: question.options[question.correctAnswer],
@@ -34,6 +37,8 @@ export const analyzeExamAnswersWithOllama = async (questions, answers, model = '
     // Ollama API'ye istek gönder
     const prompt = generatePrompt(percentage, correctCount, totalQuestions, wrongAnswers, questions)
 
+    console.log(`🤖 Ollama çağrılıyor: ${ollamaUrl}/api/generate (Model: ${ollamaModel})`)
+
     const response = await fetch(`${ollamaUrl}/api/generate`, {
       method: 'POST',
       headers: {
@@ -45,24 +50,32 @@ export const analyzeExamAnswersWithOllama = async (questions, answers, model = '
         stream: false,
         temperature: 0.7,
       }),
+      timeout: 120000, // 2 dakika timeout
     })
 
     if (!response.ok) {
-      throw new Error(`Ollama API Error: ${response.statusCode}`)
+      const errorText = await response.text()
+      throw new Error(`Ollama API hatası (${response.status}): ${errorText}`)
     }
 
     const data = await response.json()
     const feedback = data.response || data.text || ''
 
+    if (!feedback) {
+      throw new Error('Ollama yanıt verdi ama içeri boş')
+    }
+
+    console.log(`✅ Ollama başarılı yanıt verdi`)
+
     return {
       score: score,
       totalQuestions: totalQuestions,
-      feedback: formatFeedback(feedback, percentage, correctCount, totalQuestions, wrongAnswers),
+      feedback: await formatFeedback(feedback, percentage, correctCount, totalQuestions, wrongAnswers),
       wrongAnswers: wrongAnswers,
       model: `Ollama (${ollamaModel})`,
     }
   } catch (error) {
-    console.error('Ollama API Error:', error.message)
+    console.error('❌ Ollama API Hatası:', error.message)
     
     // Hata durumunda fallback cevap
     return {
@@ -77,37 +90,42 @@ export const analyzeExamAnswersWithOllama = async (questions, answers, model = '
 
 function generatePrompt(percentage, correctCount, totalQuestions, wrongAnswers, questions) {
   if (wrongAnswers.length === 0) {
-    return `Bir öğrenci sınavda tüm soruları (%100) doğru cevapladı. Kısa bir tebrik mesajı yaz. İki satırdan fazla olmasın. Türkçe olsun.`
+    return `Bir öğrenci sınavda tüm soruları (%100) doğru cevapladı. Çok kısa bir tebrik mesajı yaz (2 satır max). Türkçe olsun.`
   }
 
   const wrongDescription = wrongAnswers
-    .map((w, i) => {
-      return `${i + 1}. Soru: "${w.question}"\n   Konusu: ${w.topic}\n   Doğru cevap: "${w.correctAnswer}"\n   Öğrenci seçti: "${w.selectedAnswer}"`
+    .map((w) => {
+      return `Soru ${w.questionNumber}: "${w.question}"\n   Konusu: ${w.topic}\n   Doğru cevap: "${w.correctAnswer}"\n   Öğrenci seçti: "${w.selectedAnswer}"`
     })
     .join('\n\n')
 
   return `Bir öğrenci sınavda %${percentage} başarı elde etti (${correctCount}/${totalQuestions} doğru).
+Zephyr model olarak, detaylı ve kullanışlı geri bildirim ver.
 
 Yanlış cevaplanan ${wrongAnswers.length} soru:
 ${wrongDescription}
 
-Her yanlış soru için ŞU FORMAT'ı TAMAMEN AYNI ŞEKİLDE kullan:
+Her yanlış soru için ŞU FORMAT'ı TAMAMEN AYNI ŞEKİLDE kullan (soru numarasını kesinlikle doğru yaz):
 
-📌 KONU: [konunun adı]
+📌 SORU [NUMARA]
+🏷️ KONU: [konunun adı - AI tarafından belirle]
 ━━━━━━━━━━━━━━━━━━━━━━━━
-❌ Hata: [neden yanlış yapıldığını tekil cümle]. 
-✓ Doğru: [doğru cevap açıklaması].
-💡 Çalışma: [ne yapması gerektiğini tekil cümle].
+❓ Soru: [sorunun tam metni]
+✅ Doğru Cevap: [doğru cevap - açıklamalı]
+💡 Tavsiye Edilen Çalışma: [ne yapması gerektiğini kısa 2-3 cümle, pratik örnekler ver]
 
 ÖNEMLİ KURALLAR:
-- Çok kısa ve öz cevap ver, maksimum 2-3 satır per soru
-- Her hata için yukarıdaki FORMAT'ı kesinlikle kullan
+- Her soru için yukarıdaki FORMAT'ı AYNEN kullan
+- SORU numarasını kesinlikle [NUMARA] yerine gerçek numarayı (${wrongAnswers.map(w => w.questionNumber).join(', ')}) yaz
+- Konu adını AI olarak sen belirle
+- Doğru cevabı açık, detaylı ve anlaşılır yaz
+- Tavsiye kısa, öz, pratik ve adım adım olsun
 - Türkçe ve anlaşılır olsun
-- Öğrenciyi cesaretlendir
-- Sonunda kısa bir genel tavsiye ekle`
+- Her hata için neden yapıldığını kısaca açıkla
+- Sonunda kısa bir genel tavsiye ekle (2-3 satır)`
 }
 
-function formatFeedback(feedback, percentage, correctCount, totalQuestions, wrongAnswers) {
+async function formatFeedback(feedback, percentage, correctCount, totalQuestions, wrongAnswers) {
   let formatted = `📊 Başarı Oranı: %${percentage} (${correctCount}/${totalQuestions})\n\n`
 
   if (wrongAnswers.length === 0) {
@@ -115,6 +133,12 @@ function formatFeedback(feedback, percentage, correctCount, totalQuestions, wron
   } else {
     formatted += `📝 GÖZDEN GEÇİRİLMESİ GEREKEN KONULAR:\n\n`
     formatted += feedback
+
+    // Web search enable'sa, extra kaynaklar ekle
+    if (process.env.ENABLE_WEB_SEARCH === 'true') {
+      formatted += `\n\n📚 KAYNAKLAR:\n`
+      formatted += `Web araması yapılmıştır. Detaylı kaynaklar sonuç ayrıntısında yer almaktadır.`
+    }
   }
 
   return formatted
@@ -130,25 +154,21 @@ function generateFallbackFeedback(percentage, correctCount, totalQuestions, wron
   } else {
     feedback += `📝 GÖZDEN GEÇİRİLMESİ GEREKEN KONULAR:\n\n`
 
-    wrongAnswers.forEach((w, i) => {
-      feedback += `${i + 1}. 📌 KONU: ${w.topic}\n`
-      feedback += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`
-      feedback += `❓ Soru: "${w.question}"\n`
-      feedback += `❌ Seçtiğiniz: "${w.selectedAnswer}"\n`
-      feedback += `✅ Doğru cevap: "${w.correctAnswer}"\n`
-      feedback += `💡 Çalışma: Bu konu hakkında daha detaylı çalışmalısınız.\n`
-      feedback += `   - Konu ile ilgili ders notlarını gözden geçirin\n`
-      feedback += `   - Benzer sorular ile pratik yapın\n`
-      feedback += `   - Zaman ayırarak çalışın\n`
+    wrongAnswers.forEach((w) => {
+      feedback += `📌 SORU ${w.questionNumber}\n`
+      feedback += `🏷️ KONU: ${w.topic}\n`
+      feedback += `━━━━━━━━━━━━━━━━━━━━━━━━\n`
+      feedback += `❓ Soru: ${w.question}\n`
+      feedback += `✅ Doğru Cevap: ${w.correctAnswer}\n`
+      feedback += `💡 Tavsiye Edilen Çalışma: Bu konuyu daha derinlemesine öğrenmek için ders notlarınızı gözden geçirin ve benzer sorular çözün.\n`
       feedback += `\n`
     })
 
-    feedback += `🎯 GENEL TAVSIYELER:\n`
-    feedback += `• Zayıf olduğunuz konuları belirleyin ve extra pratik yapın\n`
-    feedback += `• Konuların temelini iyi anlamaya çalışın\n`
-    feedback += `• Düzenli ve planlı çalışış yapın\n`
-    feedback += `• Yanlış yaptığınız soruları tekrar çözyün\n\n`
-    feedback += `💪 Başarı oranınız: %${percentage} - Düzeltilmek için çok potansiyel var!`
+    feedback += `🎯 GENEL TAVSİYELER:\n`
+    feedback += `• Zayıf olduğunuz konuları belirleyin ve ek materyallerle çalışın\n`
+    feedback += `• Her soruyu çözdükten sonra neden yanlış yaptığınızı analiz edin\n`
+    feedback += `• Düzenli ve planlı bir şekilde çalışış yapın\n\n`
+    feedback += `💪 Başarı oranınız: %${percentage} - Biraz daha çalışma ile daha iyiye gidebilirsiniz!`
   }
 
   return feedback

@@ -12,7 +12,7 @@ export const analyzeExamAnswers = async (questions, answers) => {
   const wrongAnswers = []
   let correctCount = 0
 
-  answers.forEach((answer) => {
+  answers.forEach((answer, index) => {
     const question = questions.find((q) => q.id === answer.questionId)
     if (!question) return
 
@@ -20,9 +20,12 @@ export const analyzeExamAnswers = async (questions, answers) => {
       correctCount++
     } else {
       wrongAnswers.push({
+        questionId: question.id,
+        questionNumber: index + 1,  // Sınavda kaçıncı soru
         question: question.text,
         selectedAnswer: question.options[answer.selectedAnswer],
         correctAnswer: question.options[question.correctAnswer],
+        topic: question.topic || 'Bilinmiyor',
         options: question.options,
       })
     }
