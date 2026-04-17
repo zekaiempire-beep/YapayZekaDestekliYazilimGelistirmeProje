@@ -1,12 +1,12 @@
 ﻿# 🎓 AI Destekli Sınav Platformu
 
-Yapay Zeka (Claude API) tarafından desteklenen, çoktan seçmeli sınav soruları için geri bildirim veren web platformu.
+Yapay Zeka (Ollama API) tarafından desteklenen, çoktan seçmeli sınav soruları için geri bildirim veren web platformu.
 
 ## 🚀 Özellikler
 
 - **Admin Paneli**: Soru ekleme, düzenleme ve silme
 - **Aday Paneli**: Çoktan seçmeli sınavı çözme
-- **AI Geri Bildirimi**: Claude API kullanarak otomatik analiz ve kişiselleştirilmiş feedback
+- **AI Geri Bildirimi**: Ollama API kullanarak otomatik analiz ve kişiselleştirilmiş feedback
 - **Sonuç Raporlama**: Başarı oranı ve detaylı AI tarafından yapılan analiz
 
 ## 📋 Proje Yapısı
@@ -30,7 +30,7 @@ sinav-platformu/
     │   └── exams.js       # Sınav sonuç endpoints
     ├── utils/
     │   ├── storage.js     # JSON dosya depolaması
-    │   └── claudeAnalyzer.js  # Claude AI entegrasyonu
+    │   └── OllamaAnalyzer.js  # Ollama AI entegrasyonu
     ├── data/              # JSON veri dosyaları
     └── server.js          # Express sunucusu
 ```
@@ -88,7 +88,7 @@ npm run dev
 ### Sonuçlar
 
 - Başarı oranı (Puan / Toplam Soru)
-- Claude AI tarafından yapılan detaylı geri bildirim
+- Ollama AI tarafından yapılan detaylı geri bildirim
 - Yanlış cevapların analiz ve iyileştirme önerileri
 
 ## 🔌 API Endpoints
@@ -162,7 +162,7 @@ Backend `/api/exams/submit` endpoint'ine sınav cevapları gönderildiğinde:
 - `cors` - Cross-Origin Resource Sharing
 - `dotenv` - Environment variables
 - `uuid` - Unique identifier generation
-- `anthropic` - Claude API client
+- `Ollama` - Ollama API client
 
 ### Frontend
 
