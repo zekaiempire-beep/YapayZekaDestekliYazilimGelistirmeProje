@@ -1,0 +1,60 @@
+[
+  {
+    "id": "123d9e9f-ecc8-4f78-b030-904b948fec22",
+    "text": "Naber",
+    "options": [
+      "iyiyim",
+      "2",
+      "3",
+      "4"
+    ],
+    "correctAnswer": 0
+  },
+  {
+    "id": "81e01747-0c0c-4472-b8a3-7c9fe5138e3a",
+    "text": "nasılsın",
+    "options": [
+      "1",
+      "2",
+      "3",
+      "4"
+    ],
+    "correctAnswer": 1
+  },
+  {
+    "id": "bd7fa7d5-0ce1-41be-b08d-1768d3558571",
+    "examId": "3dc12730-b156-46ce-921f-8646c69f8cac",
+    "text": "1+1",
+    "options": [
+      "2",
+      "3",
+      "4",
+      "5"
+    ],
+    "correctAnswer": 0
+  },
+  {
+    "id": "9b54629e-5dc7-4dfa-8e33-7e1ffd314513",
+    "examId": "3dc12730-b156-46ce-921f-8646c69f8cac",
+    "text": "5*5",
+    "options": [
+      "25",
+      "12",
+      "4",
+      "3"
+    ],
+    "correctAnswer": 0
+  },
+  {
+    "id": "ab598fe3-2c6b-4ae9-9010-3c1c4945e2a3",
+    "examId": "3dc12730-b156-46ce-921f-8646c69f8cac",
+    "text": "10+10",
+    "options": [
+      "20",
+      "32",
+      "32",
+      "2"
+    ],
+    "correctAnswer": 0
+  }
+]

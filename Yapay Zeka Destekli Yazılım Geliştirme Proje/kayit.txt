@@ -1,0 +1,7 @@
+git add .
+git commit -m "Yeni dosya eklendi"
+git push
+
+
+^^^^^^^^^^^^^^^^^^
+github kayıt kodu
