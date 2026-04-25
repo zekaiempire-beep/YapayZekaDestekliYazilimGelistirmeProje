@@ -64,7 +64,7 @@ npm run dev
 ```
 
 ## 📚 Kullanım
-
+a
 ### Admin Paneli (http://localhost:3000)
 
 1. Ana sayfadan "Admin Girişi" butonuna tıkla
