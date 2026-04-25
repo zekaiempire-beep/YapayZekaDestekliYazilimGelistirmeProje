@@ -1,176 +1,100 @@
-﻿# 🎓 AI Destekli Sınav Platformu
+# AI Sınav Platformu - Ollama Destekli Akıllı Değerlendirme Sistemi
 
-Yapay Zeka (Ollama API) tarafından desteklenen, çoktan seçmeli sınav soruları için geri bildirim veren web platformu.
+Bu proje, yapay zeka (Ollama API) entegrasyonu ile geliştirilen, çoktan seçmeli sınav süreçlerini otomatize eden ve kullanıcılara anında kişiselleştirilmiş geri bildirim sunan modern bir web uygulamasıdır. Temiz kod prensipleri ve istemci-sunucu mimarisine sadık kalınarak hem eğitmenler hem de öğrenciler için hızlı, kesintisiz ve eğitici bir deneyim hedeflenmiştir.
 
-## 🚀 Özellikler
+# Kullanılan Teknolojiler
+•	Backend: Node.js, REST API
+•	Frontend: React, Next.js, Tailwind CSS
+•	Yapay Zeka (AI): Ollama API (Yerel AI Model Entegrasyonu)
+•	Veri Depolama: Yerel JSON Dosya Sistemi (uuid ile benzersiz kimliklendirme)
+•	Ağ & Entegrasyon: Axios HTTP İstemcisi, CORS, Dot.env (Çevre Değişkenleri Yönetimi)
 
-- **Admin Paneli**: Soru ekleme, düzenleme ve silme
-- **Aday Paneli**: Çoktan seçmeli sınavı çözme
-- **AI Geri Bildirimi**: Ollama API kullanarak otomatik analiz ve kişiselleştirilmiş feedback
-- **Sonuç Raporlama**: Başarı oranı ve detaylı AI tarafından yapılan analiz
+# Temel Özellikler ve Sınav Mekanikleri
+•	AI Geri Bildirimi: Sistem sadece doğru/yanlış sayısını vermekle kalmaz. Sınav bitiminde gönderilen cevaplar backend üzerinden yapay zeka API’ya iletilir. Yapay zeka hatalı cevapları analiz eder, kavram yanılgılarını açıklar ve tamamen teşvik edici bir tonda kişiselleştirilmiş çalışma önerileri sunar.
+•	İzole Edilmiş Paneller: Eğitmenler (Admin) ve Adaylar (Öğrenci) için farklı giriş noktaları ve yetki alanları sunulur.
+•	Dinamik Soru Yönetimi: Admin panelinden saniyeler içinde yeni sorular eklenebilir, mevcut soruların metinleri veya doğru cevapları düzenlenebilir. Değişiklikler anında sisteme yansır.
+•	Anlık Raporlama: Öğrenci sınavı bitirdiği an, herhangi bir bekleme süresi olmadan başarı oranı (Puan / Toplam Soru) ve AI analiz raporu ekranda oluşturulur.
 
-## 📋 Proje Yapısı
+# Proje Klasör Yapısı
+1. frontend/app: Sistemin kullanıcı arayüzü (UI) katmanıdır. page.tsx (Ana sayfa), admin/page.tsx (Yönetim Paneli) ve exam/page.tsx (Sınav Ekranı) gibi temel sayfalar burada yönlendirilir.
+2. frontend/components & lib: Tekrar kullanılabilir React UI bileşenleri ve frontend tarafındaki yardımcı fonksiyonların tutulduğu, kod tekrarını önleyen mimari alandır. 
+3. backend/routes: Sistemin dışa açılan API kapılarıdır. questions.js (Soru CRUD işlemleri) ve exams.js (Sınav değerlendirme) uç noktaları buradan yönetilir. 
+4. backend/utils & data: Veri işleme mantığının bulunduğu yerdir. storage.js (JSON veri yazma/okuma) ve uygulamanın beyni olan OllamaAnalyzer.js (Yapay zeka entegrasyonu) bu katmanda çalışır.
 
-```
-sinav-platformu/
-├── frontend/          # Next.js React uygulaması
-│   ├── src/
-│   │   ├── app/
-│   │   │   ├── page.tsx          # Ana sayfa (giriş)
-│   │   │   ├── admin/page.tsx    # Admin paneli
-│   │   │   ├── exam/page.tsx     # Sınav sayfası
-│   │   │   └── globals.css       # Global stiller
-│   │   ├── components/            # React bileşenleri
-│   │   └── lib/                   # Yardımcı fonksiyonlar
-│   └── package.json
-│
-└── backend/           # Express.js REST API
-    ├── routes/
-    │   ├── questions.js   # Soru yönetimi endpoints
-    │   └── exams.js       # Sınav sonuç endpoints
-    ├── utils/
-    │   ├── storage.js     # JSON dosya depolaması
-    │   └── OllamaAnalyzer.js  # Ollama AI entegrasyonu
-    ├── data/              # JSON veri dosyaları
-    └── server.js          # Express sunucusu
-```
+# Kurulum ve Çalıştırma Rehberi
+Sistemi bilgisayarınızda yerel olarak çalıştırmak için Node.js ve arka plan analizleri için Ollama'nın kurulu olması gerekmektedir.
 
-## 🛠️ Kurulum
+1. Ön Gereksinimler
+•	Node.js
+•	Ollama (Bilgisayarda kurulu ve uygun modelin indirilmiş olması gerekir)
 
-### Backend Kurulumu
-
-```bash
+2. Adım Adım Çalıştırma Proje iki farklı sunucu (Backend ve Frontend) olarak ayağa kalkmaktadır. İki ayrı terminal (veya CMD/PowerShell) ekranı açın:
+Terminal 1 (Backend Sunucusu):
+Bash
 cd backend
-
-# Bağımlılıkları yükle
 npm install
-
-# Sunucuyu başlat
 npm run dev
-# Server http://localhost:5000 adresinde çalışmaya başlar
-```
 
-### Frontend Kurulumu
-
-```bash
+Terminal 2 (Frontend Arayüzü):
+Bash
 cd frontend
-
-# Bağımlılıkları yükle
 npm install
-
-# Development sunucusunu başlat
 npm run dev
-# Uygulama http://localhost:3000 adresinde açılır
-```
 
-## 📚 Kullanım
+3. Uygulamaya Erişim
+•	Ana Sayfa (Giriş Seçimi): http://localhost:3000
+•	Admin Paneli: http://localhost:3000/admin
+•	Aday Sınav Ekranı: http://localhost:3000/exam
+•	Backend API: http://localhost:5000
 
-### Admin Paneli (http://localhost:3000)
+# Geliştirici Rehberi: API Yönetimi ve Entegrasyon (Cheat Sheet)
+Dış sistemlerin veya geliştiricilerin sisteme entegre olabilmesi için tasarlanan temel API Endpoint'leri aşağıda listelenmiştir:
 
-1. Ana sayfadan "Admin Girişi" butonuna tıkla
-2. Admin Paneline Git' butonuna tıkla
-3. Soru Ekle ve Düzenle formunu kullan:
-   - Soru metni yazın
-   - 4 seçenek girin
-   - Doğru cevabı seçin (radio button)
-   - "Ekle" butonuna tıklayın
+1. Soru Yönetimi (CRUD İşlemleri):
+•	GET /api/questions : Tüm soruları listeler.
+•	POST /api/questions : Yeni soru ekler.
+•	PUT /api/questions/:id : Belirtilen soruyu günceller.
+•	DELETE /api/questions/:id : Belirtilen soruyu siler.
 
-### Aday Paneli (http://localhost:3000)
-
-1. Ana sayfadan "Aday Girişi" butonuna tıkla
-2. "Sınava Başla" butonuna tıkla
-3. Soruları cevaplayın:
-   - Her sorunun 4 seçeneğinden birini seçin
-   - Önceki/Sonraki butonlarıyla sorular arasında gezin
-   - Tüm soruları cevaplayın
-4. "Sınavı Gönder" butonuna tıklayın
-
-### Sonuçlar
-
-- Başarı oranı (Puan / Toplam Soru)
-- Ollama AI tarafından yapılan detaylı geri bildirim
-- Yanlış cevapların analiz ve iyileştirme önerileri
-
-## 🔌 API Endpoints
-
-### Sorular
-
-```
-GET    /api/questions              # Tüm soruları getir
-POST   /api/questions              # Yeni soru ekle
-PUT    /api/questions/:id          # Soruyu güncelle
-DELETE /api/questions/:id          # Soruyu sil
-```
-
-**POST/PUT Body:**
-
-```json
+Örnek POST/PUT Body Payload:
+JSON
 {
   "text": "Soru metni",
   "options": ["Seçenek 1", "Seçenek 2", "Seçenek 3", "Seçenek 4"],
   "correctAnswer": 0
 }
-```
 
-### Sınavlar
+2. Sınav ve Değerlendirme Sistemi:
+•	POST /api/exams/submit : Öğrencinin cevaplarını gönderir ve AI analizini başlatır.
+•	GET /api/exams/history : Geçmiş sınav sonuçlarını ve AI raporlarını getirir.
 
-```
-POST   /api/exams/submit           # Sınav sonuçlarını gönder
-GET    /api/exams/history          # Geçmiş sonuçları getir
-```
-
-**POST /api/exams/submit Body:**
-
-```json
+Örnek Sınav Gönderim (Submit) Payload:
+JSON
 {
   "answers": [
     {
-      "questionId": "uuid",
+      "questionId": "uuid-örnek-id-1234",
       "selectedAnswer": 0
     }
   ]
 }
-```
 
-## 🤖 Ollama AI Entegrasyonu
+# Kullanıcı Rehberi (Nasıl Kullanılır?)
+Admin (Eğitmen) Olarak Soru Ekleme:
+1.	Ana sayfadan "Admin Girişi" butonuna tıklayın.
+2.	Yönetim panelinde soru metnini ve 4 farklı seçeneği ilgili kutulara girin.
+3.	Doğru olan seçeneği işaretleyin ve "Ekle" butonuna basarak soruyu sisteme dahil edin.
 
-Backend `/api/exams/submit` endpoint'ine sınav cevapları gönderildiğinde:
+Aday (Öğrenci) Olarak Sınava Katılma:
+1.	Ana sayfadan "Aday Girişi" butonuna ve ardından "Sınava Başla" butonuna tıklayın.
+2.	Ekrana gelen sorularda doğru olduğunu düşündüğünüz şıkkı seçin. Önceki/Sonraki butonları ile sorular arasında gezinebilirsiniz.
+3.	Tüm soruları tamamladığınızda "Sınavı Gönder" butonuna tıklayın. Saniyeler içinde yapay zeka analiziniz ve başarı puanınız ekranda belirecektir.
 
-1. Yanlış cevaplar tespit edilir
-2. Ollama API'ye yanlış cevaplar gönderilir
-3. AI kapsamlı bir analiz yaparak:
-   - Her hata için açıklama sunar
-   - Zayıf konuları tanımlar
-   - İyileştirme önerileri verir
-   - Olumlu ve teşvik edici bir ton kullanır
-
-## 🔐 Güvenlik Notları
-
-- Bu örnek **demostrasyon** amaçlı olup, üretim ortamı için şu improvements gereklidir:
-  - Kullanıcı kaydı ve kimlik doğrulama
-  - JWT token tabanlı yetkilendirme
-  - Gerçek bir veritabanı (PostgreSQL, MongoDB)
-  - API rate limiting
-  - HTTPS/SSL
-  - CORS politikası kısıtlaması
-
-## 📦 Bağımlılıklar
-
-### Backend
-
-- `express` - Web framework
-- `cors` - Cross-Origin Resource Sharing
-- `dotenv` - Environment variables
-- `uuid` - Unique identifier generation
-- `Ollama` - Ollama API client
-
-### Frontend
-
-- `next` - React framework
-- `react` - UI library
-- `tailwindcss` - CSS framework
-- `axios` - HTTP client
-
+# Güvenlik ve Üretim Ortamı (Production) İyileştirmeleri
+Bu proje mevcut haliyle bir demostrasyon (PoC) altyapısına sahiptir. Kurumsal bir yapıya (Enterprise) geçiş yapmak ve projeyi canlıya (Production) almak için aşağıdaki mimari geliştirmelerin yapılması hedeflenmektedir:
+•	Kimlik Doğrulama & Yetkilendirme: Admin ve Öğrenci girişleri için JWT (JSON Web Token) tabanlı güvenli oturum yönetimi eklenmelidir.
+•	Kalıcı Veri Katmanı: Mevcut JSON tabanlı geçici depolama mimarisi yerine, PostgreSQL veya MongoDB gibi kurumsal düzeyde bir ilişkisel/doküman veri tabanına geçilmelidir.
+•	Hizmet Sürekliliği ve Güvenlik: Kötü niyetli API isteklerini engellemek için Rate Limiting, sunucu taraflı CORS kısıtlamaları ve iletişimin şifrelenmesi için HTTPS/SSL sertifikaları yapılandırılmalıdır.
 
 
 
