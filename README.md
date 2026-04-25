@@ -59,6 +59,8 @@ cd frontend
 
 npm install <------- (bağımlılıkları yükle)
 
+npx prisma generate <------- (Prisma Client'ı oluştur)
+
 npm run dev
 
 
