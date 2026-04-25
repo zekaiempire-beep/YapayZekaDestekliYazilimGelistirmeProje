@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Dependencies
 node_modules/
 .pnp
@@ -38,3 +39,11 @@ yarn-error.log*
 
 # OS
 Thumbs.db
+=======
+node_modules/
+.next/
+dist/
+.env
+.env.local
+*.log
+>>>>>>> 77590cf6181008c6ad908f5cbb9cfc9cafa1e59f
