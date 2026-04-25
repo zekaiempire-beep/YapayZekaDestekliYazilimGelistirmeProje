@@ -50,6 +50,8 @@ cd backend
 
 npm install <------- (bağımlılıkları yükle)
 
+npx prisma generate <------- (Prisma Client'ı oluştur)
+
 npm run dev
 
 Terminal 2 (Frontend Arayüzü):
@@ -58,8 +60,6 @@ Bash
 cd frontend
 
 npm install <------- (bağımlılıkları yükle)
-
-npx prisma generate <------- (Prisma Client'ı oluştur)
 
 npm run dev
 
