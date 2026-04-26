@@ -39,8 +39,6 @@ Sistemi bilgisayarınızda yerel olarak çalıştırmak için Node.js ve arka pl
 1. Ön Gereksinimler
 •	Node.js
 
-•	Ollama (Bilgisayarda kurulu ve uygun modelin indirilmiş olması gerekir)
-
 
 2. Adım Çalıştırma Proje iki farklı sunucu (Backend ve Frontend) olarak ayağa kalkmaktadır. İki ayrı terminal (veya CMD/PowerShell) ekranı açın:
 Terminal 1 (Backend Sunucusu):
@@ -49,6 +47,8 @@ Bash
 cd backend
 
 npm install <------- (bağımlılıkları yükle)
+
+npx prisma generate <------- (Prisma Client'ı oluştur)
 
 npm run dev
 
