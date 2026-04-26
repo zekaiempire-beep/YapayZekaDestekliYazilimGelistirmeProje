@@ -55,7 +55,7 @@ export default function Home() {
             >
               <div className="flex items-center justify-center gap-3">
                 <span className="text-2xl">👤</span>
-                <span>Sınava Gir</span>
+                <span>Aday girişi</span>
               </div>
             </button>
           </div>
@@ -93,14 +93,6 @@ export default function Home() {
               <span>Sınava Başla</span>
               <span className="text-xl">✓</span>
             </button>
-            
-            <button
-              onClick={handleViewPreviousResults}
-              className="w-full group bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold py-4 px-6 rounded-xl transition-all duration-300 hover:shadow-xl hover:shadow-purple-500/50 transform hover:-translate-y-1 flex items-center justify-center gap-2"
-            >
-              <span className="text-xl">📊</span>
-              <span>Önceki Sonuçları Gör</span>
-            </button>
           </div>
         ) : (
           <div>
@@ -132,13 +124,6 @@ export default function Home() {
                     <span>→</span>
                   </button>
                 </Link>
-                <button
-                  onClick={() => router.push('/aday-sonuclar')}
-                  className="w-full group bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold py-4 px-6 rounded-xl transition-all duration-300 hover:shadow-xl hover:shadow-purple-500/50 transform hover:-translate-y-1 flex items-center justify-center gap-2"
-                >
-                  <span className="text-xl">📊</span>
-                  <span>Önceki Sonuçlarım</span>
-                </button>
               </div>
             )}
           </div>

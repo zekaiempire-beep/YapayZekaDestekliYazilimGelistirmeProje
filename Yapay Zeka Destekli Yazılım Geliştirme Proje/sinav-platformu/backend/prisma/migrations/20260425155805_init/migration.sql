@@ -13,6 +13,7 @@ CREATE TABLE "questions" (
     "id" TEXT NOT NULL,
     "examId" TEXT NOT NULL,
     "text" TEXT NOT NULL,
+    "topic" TEXT,
     "options" TEXT[],
     "correctAnswer" INTEGER NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
