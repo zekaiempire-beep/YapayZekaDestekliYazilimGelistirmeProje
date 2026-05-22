@@ -1,8 +1,8 @@
-# Sınav Yönetim Sistemi
+# 📝 Sınav Yönetim Sistemi
 
 Bu proje, yapay zeka (Ollama API) entegrasyonu ile geliştirilen, çoktan seçmeli sınav süreçlerini otomatize eden ve kullanıcılara anında kişiselleştirilmiş geri bildirim sunan modern bir web uygulamasıdır. Temiz kod prensipleri ve istemci-sunucu mimarisine sadık kalınarak hem eğitmenler hem de öğrenciler için hızlı, kesintisiz ve eğitici bir deneyim hedeflenmiştir. 
 
-# Kullanılan Teknolojiler
+# 🛠️ Kullanılan Teknolojiler
 •	Backend: NestJS, Node.js, REST API, TypeORM, Axios.
 
 •	Frontend: React, Next.js, Tailwind CSS
@@ -11,7 +11,7 @@ Bu proje, yapay zeka (Ollama API) entegrasyonu ile geliştirilen, çoktan seçme
 
 •	Veri Depolama: PostgreSQL Veritabanı ile sistem hafızasını kullanma.
 
-# Temel Özellikler ve Sınav Mekanikleri
+# ⚙️ Temel Özellikler ve Sınav Mekanikleri
 
 •	Öğrenci, Personel ve Admin şeklinde bir kayıt sistemi mevcuttur.
 
@@ -32,7 +32,7 @@ Bu proje, yapay zeka (Ollama API) entegrasyonu ile geliştirilen, çoktan seçme
 
 
 
-## Proje Yapısı
+## 📁 Proje Yapısı
 
 ```
 sinavsistemiV2/
@@ -56,7 +56,7 @@ sinavsistemiV2/
     └── public/
 ```
 
-## Kullanıcı Rolleri
+## 👥 Kullanıcı Rolleri
 
 1. **Öğrenci (Student)**
    - Sınavları görüntüle
@@ -75,9 +75,9 @@ sinavsistemiV2/
    - Sistem raporlarını görüntüleme
    - Sistem ayarlarını yapılandırma
 
-## Teknoloji Yığını
+## 💻 Teknoloji Yığını
 
-### Backend
+### 🔧 Backend
 
 - **NestJS** - Express tabanlı Node.js framework
 - **TypeORM** - SQL ORM
@@ -85,23 +85,23 @@ sinavsistemiV2/
 - **JWT** - Token tabanlı kimlik doğrulama
 - **Passport.js** - Kimlik doğrulama stratejileri
 
-### Frontend
+### 🎨 Frontend
 
 - **React** - UI kütüphanesi
 - **React Router** - Sayfa yönlendirmesi
 - **Axios** - HTTP istemci
 - **CSS3** - Stil
 
-## Kurulum ve Çalıştırma
+## 🚀 Kurulum ve Çalıştırma
 
-### Ön Koşullar
+### 📌 Ön Koşullar
 
 - Node.js 16+
 - PostgreSQL 12+
 - npm
 - Ollama / Model: Mistral
 
-### Backend Kurulumu
+### 🔧 Backend Kurulumu
 
 1. Backend dizinine gidin:
 
@@ -135,7 +135,7 @@ npm run start:dev
 
 Backend `http://localhost:3000` adresinde çalışacaktır.
 
-### PostgreSQL Veritabanı Kurulumu
+### 🗄️ PostgreSQL Veritabanı Kurulumu
 
 PostgreSQL'i yüklü değilse:
 
@@ -153,7 +153,7 @@ psql
 CREATE DATABASE sinavsistemi;
 ```
 
-### Frontend Kurulumu
+### 🎨 Frontend Kurulumu
 
 1. Frontend dizinine gidin:
 
@@ -175,7 +175,7 @@ npm start
 
 Frontend `http://localhost:3000` adresinde çalışacaktır. (React server)
 
-## Gerekli Ports
+## 🔌 Gerekli Ports
 
 - **Backend API**: `http://localhost:3000` (arka planda)
 - **Frontend**: `http://localhost:3000` (React dev server'ında çalışacaktır, port ayarlanabilir)
@@ -186,36 +186,36 @@ Eğer çakışma yaşıyorsanız, frontend'i farklı portta çalıştırabilirsi
 PORT=3001 npm start
 ```
 
-## API Endpoints
+## 🌐 API Endpoints
 
-### Authentication (`/api/auth`)
+### 🔐 Authentication (`/api/auth`)
 
 - `POST /register` - Yeni kullanıcı kaydı
 - `POST /login` - Kullanıcı girişi
 - `GET /profile` - Kullanıcı profilini getir (JWT gerekli)
 
-## Kullanıcı Akışı
+## 🧭 Kullanıcı Akışı
 
-### Kayıt Olma
+### 📝 Kayıt Olma
 
 1. `/register` sayfasına gidin
 2. Ad, soyadı, e-posta, şifresi ve rolü girin
 3. Kayıt ol düğmesine tıklayın
 4. Otomatik olarak giriş sayfasına yönlendirilirsiniz
 
-### Giriş Yapma
+### 🔑 Giriş Yapma
 
 1. `/login` sayfasına gidin
 2. E-posta ve şifrenizi girin
 3. Giriş yap düğmesine tıklayın
 4. Başarılı girişten sonra Dashboard'a yönlendirilirsiniz
 
-### Dashboard
+### 📊 Dashboard
 
 - Rolünüze göre farklı paneller görsrsünüz
 - Çıkış Yap butonu ile oturumu sonlandırabilirsiniz
 
-## Kimlik Doğrulama Akışı
+## 🛡️ Kimlik Doğrulama Akışı
 
 1. Kullanıcı login yapar
 2. Backend JWT token üretir ve geri gönderir
@@ -223,7 +223,7 @@ PORT=3001 npm start
 4. Her API isteği Authorization header'ında token gönderilir
 5. Backend token'ı doğrular ve işlemi yapılandırır
 
-## Yapılacak İşler (Gelecek)
+## ✅ Yapılacak İşler (Gelecek)
 
 Eksikler ve Öneriler
 
@@ -241,13 +241,13 @@ Eksikler ve Öneriler
 
 -> Personel review yapılabilir
 
-## Sorun Giderme
+## 🧯 Sorun Giderme
 
-### CORS Hatası
+### 🌍 CORS Hatası
 
 Backend'deki CORS ayarlarını kontrol edin. `main.ts` dosyasında frontend URL'i doğru şekilde konfigüre edilmiş olmalıdır.
 
-### Veritabanı bağlantı hatası
+### 🗄️ Veritabanı bağlantı hatası
 
 - PostgreSQL'in çalışıyor olduğundan emin olun
 kullanıcı adı: postgres
@@ -255,7 +255,7 @@ kullanıcı adı: postgres
 - 
 - `.env` dosyasındaki veritabanı bilgilerini kontrol edin
 
-### Port kullanımda
+### 🔌 Port kullanımda
 
 - `lsof -i :3000` (Linux/Mac) - hangi proces port 3000'i kullanıyor kontrol edin
 - `netstat -ano | findstr :3000` (Windows) - kullanımdaki portu kontrol edin
