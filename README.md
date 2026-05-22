@@ -1,6 +1,37 @@
 # Sınav Yönetim Sistemi
 
-React Frontend ve NestJS Backend ile geliştirilmiş bir sınav yönetim uygulaması.
+Bu proje, yapay zeka (Ollama API) entegrasyonu ile geliştirilen, çoktan seçmeli sınav süreçlerini otomatize eden ve kullanıcılara anında kişiselleştirilmiş geri bildirim sunan modern bir web uygulamasıdır. Temiz kod prensipleri ve istemci-sunucu mimarisine sadık kalınarak hem eğitmenler hem de öğrenciler için hızlı, kesintisiz ve eğitici bir deneyim hedeflenmiştir. 
+
+# Kullanılan Teknolojiler
+•	Backend: NestJS, Node.js, REST API
+
+•	Frontend: React, Next.js, Tailwind CSS
+
+•	Yapay Zeka (AI): Ollama API - Mistral (Yerel AI Model Entegrasyonu)
+
+•	Veri Depolama: PostgreSQL Veritabanı ile sistem hafızasını kullanma.
+
+# Temel Özellikler ve Sınav Mekanikleri
+
+•	Öğrenci, Personel ve Admin şeklinde bir kayıt sistemi mevcuttur.
+
+•	Personel ve Admin tarafından hazırlanan test sınavlarrını, öğrenciler uygulayabilmektedir ve sonuçları gönderebilmektedir.
+
+•	Raporlama: Öğrencinin sınav sonucu rapor olarak admin panelinden görüntülenebilecek şekilde karşısına düşmekte.
+
+•	 Değerlendirme: Admini öğrencinin sınav raporunu görüntüleyip, yanlış yapılan sorular için geribildirim yapabilmekte ve sınav sonuçlarını sonuçlarını yayınlayabilmektedir. Daha sonrası için de geribildirim notunu güncelleyebilmektedir.
+
+•	Yayınlanan sınav raporu, öğrenci tarafından görüntülenebilmektedir.
+
+•	AI Geri Bildirimi: Sistem sadece doğru/yanlış sayısını vermekle kalmaz. Sınav bitiminde gönderilen cevaplar backend üzerinden yapay zeka API’ya iletilir. Yapay zeka hatalı cevapları analiz eder, kavram yanılgılarını açıklar ve tamamen teşvik edici bir tonda kişiselleştirilmiş çalışma önerileri sunar.
+
+•	İzole Edilmiş Paneller: Eğitmenler (Admin) ve Adaylar (Öğrenci) için farklı giriş noktaları ve yetki alanları sunulur.
+
+•	Dinamik Soru Yönetimi: Admin panelinden saniyeler içinde yeni sorular eklenebilir, mevcut soruların metinleri veya doğru cevapları düzenlenebilir. Değişiklikler anında sisteme yansır.
+
+•	Raporlama: Öğrenci sınavı bitirdiği an, herhangi bir bekleme süresi olmadan başarı oranı (Puan / Toplam Soru) ve AI analiz raporu ekranda oluşturulur.
+
+
 
 ## Proje Yapısı
 
@@ -69,6 +100,7 @@ sinavsistemiV2/
 - Node.js 16+
 - PostgreSQL 12+
 - npm
+- Ollama / Model: Mistral
 
 ### Backend Kurulumu
 
