@@ -1,248 +1,154 @@
-# Sınav Yönetim Sistemi
+# AI Sınav Platformu - Ollama Destekli Akıllı Değerlendirme Sistemi
 
-React Frontend ve NestJS Backend ile geliştirilmiş bir sınav yönetim uygulaması.
+Bu proje, yapay zeka (Ollama API) entegrasyonu ile geliştirilen, çoktan seçmeli sınav süreçlerini otomatize eden ve kullanıcılara anında kişiselleştirilmiş geri bildirim sunan modern bir web uygulamasıdır. Temiz kod prensipleri ve istemci-sunucu mimarisine sadık kalınarak hem eğitmenler hem de öğrenciler için hızlı, kesintisiz ve eğitici bir deneyim hedeflenmiştir. 
 
-## Proje Yapısı
+# Kullanılan Teknolojiler
+•	Backend: NestJS, Node.js, REST API
 
-```
-sinavsistemiV2/
-├── backend/          # NestJS API Sunucusu
-│   ├── src/
-│   │   ├── auth/     # Kimlik doğrulama (login, register, JWT)
-│   │   ├── entities/ # Database entiteleri
-│   │   ├── config/   # Yapılandırma dosyaları
-│   │   └── main.ts   # Uygulama entry point
-│   ├── .env          # Ortam değişkenleri
-│   └── package.json
-└── frontend/         # React Web Arayüzü
-    ├── src/
-    │   ├── pages/        # Giriş, Kayıt, Dashboard
-    │   ├── components/   # Dashboard bileşenleri
-    │   ├── context/      # Auth Context
-    │   ├── services/     # API servisleri
-    │   ├── guards/       # Rota koruyucuları
-    │   └── App.jsx       # Ana uygulama
-    ├── package.json
-    └── public/
-```
+•	Frontend: React, Next.js, Tailwind CSS
 
-## Kullanıcı Rolleri
+•	Yapay Zeka (AI): Ollama API - Mistral (Yerel AI Model Entegrasyonu)
 
-1. **Öğrenci (Student)**
-   - Sınavları görüntüle
-   - Yaklaşan sınavlara hazırlanma
-   - Tamamlanan sınavların sonuçlarını görüntüleme
+•	Veri Depolama: PostgreSQL Veritabanı ile sistem hafızasını kullanma.
 
-2. **Personel (Staff)**
-   - Yeni sınav oluşturma
-   - Sınavları yönetme
-   - Sonuçları indirme
-   - Son etkinlikleri takip etme
 
-3. **Admin (Admin)**
-   - Kullanıcıları yönetme
-   - Tüm sınavları yönetme
-   - Sistem raporlarını görüntüleme
-   - Sistem ayarlarını yapılandırma
 
-## Teknoloji Yığını
+# Temel Özellikler ve Sınav Mekanikleri
 
-### Backend
+•	Öğrenci, Personel ve Admin şeklinde bir kayıt sistemi mevcuttur.
 
-- **NestJS** - Express tabanlı Node.js framework
-- **TypeORM** - SQL ORM
-- **PostgreSQL** - Veritabanı
-- **JWT** - Token tabanlı kimlik doğrulama
-- **Passport.js** - Kimlik doğrulama stratejileri
+•	Personel ve Admin tarafından hazırlanan test sınavlarrını, öğrenciler uygulayabilmektedir ve sonuçları gönderebilmektedir.
 
-### Frontend
+•	Raporlama: Öğrencinin sınav sonucu rapor olarak admin panelinden görüntülenebilecek şekilde karşısına düşmekte.
 
-- **React** - UI kütüphanesi
-- **React Router** - Sayfa yönlendirmesi
-- **Axios** - HTTP istemci
-- **CSS3** - Stil
+•	 Değerlendirme: Admini öğrencinin sınav raporunu görüntüleyip, yanlış yapılan sorular için geribildirim yapabilmekte ve sınav sonuçlarını sonuçlarını yayınlayabilmektedir. Daha sonrası için de geribildirim notunu güncelleyebilmektedir.
 
-## Kurulum ve Çalıştırma
+•	Yayınlanan sınav raporu, öğrenci tarafından görüntülenebilmektedir.
 
-### Ön Koşullar
 
-- Node.js 16+
-- PostgreSQL 12+
-- npm
 
-### Backend Kurulumu
+•	AI Geri Bildirimi: Sistem sadece doğru/yanlış sayısını vermekle kalmaz. Sınav bitiminde gönderilen cevaplar backend üzerinden yapay zeka API’ya iletilir. Yapay zeka hatalı cevapları analiz eder, kavram yanılgılarını açıklar ve tamamen teşvik edici bir tonda kişiselleştirilmiş çalışma önerileri sunar.
 
-1. Backend dizinine gidin:
+•	İzole Edilmiş Paneller: Eğitmenler (Admin) ve Adaylar (Öğrenci) için farklı giriş noktaları ve yetki alanları sunulur.
 
-```bash
+•	Dinamik Soru Yönetimi: Admin panelinden saniyeler içinde yeni sorular eklenebilir, mevcut soruların metinleri veya doğru cevapları düzenlenebilir. Değişiklikler anında sisteme yansır.
+
+•	Raporlama: Öğrenci sınavı bitirdiği an, herhangi bir bekleme süresi olmadan başarı oranı (Puan / Toplam Soru) ve AI analiz raporu ekranda oluşturulur.
+
+
+# Proje Klasör Yapısı
+1. Frontend/app: Sistemin kullanıcı arayüzü (UI) katmanıdır. page.tsx (Ana sayfa), admin/page.tsx (Yönetim Paneli) ve exam/page.tsx (Sınav Ekranı) gibi temel sayfalar burada yönlendirilir.
+
+2. Frontend/components & lib: Tekrar kullanılabilir React UI bileşenleri ve frontend tarafındaki yardımcı fonksiyonların tutulduğu, kod tekrarını önleyen mimari alandır. 
+
+3. Backend/routes: Sistemin dışa açılan API kapılarıdır. questions.js (Soru CRUD işlemleri) ve exams.js (Sınav değerlendirme) uç noktaları buradan yönetilir. 
+
+4. Backend/utils & data: Veri işleme mantığının bulunduğu yerdir. storage.js (JSON veri yazma/okuma) ve uygulamanın beyni olan OllamaAnalyzer.js (Yapay zeka entegrasyonu) bu katmanda çalışır.
+
+# Kurulum ve Çalıştırma Rehberi
+Sistemi bilgisayarınızda yerel olarak çalıştırmak için Node.js ve arka plan analizleri için Ollama'nın kurulu olması gerekmektedir.
+
+1. Ön Gereksinimler
+•	Node.js
+
+
+2. Adım Çalıştırma Proje iki farklı sunucu (Backend ve Frontend) olarak ayağa kalkmaktadır. İki ayrı terminal (veya CMD/PowerShell) ekranı açın:
+Terminal 1 (Backend Sunucusu):
+Bash
+
 cd backend
-```
 
-2. Bağımlılıkları kurun:
+npm install <------- (bağımlılıkları yükle)
 
-```bash
-npm install
-```
-
-3. `.env` dosyasını kontrol edin ve veritabanı bağlantısını ayarlayın:
-
-```env
-DB_HOST=localhost
-DB_PORT=5432
-DB_USERNAME=postgres
-DB_PASSWORD=postgres
-DB_NAME=sinavsistemi
-JWT_SECRET=your_jwt_secret_key_change_this_in_production
-JWT_EXPIRATION=7d
-```
-
-4. Geliştirme sunucusunu başlatın:
-
-```bash
-npm run start:dev
-```
-
-Backend `http://localhost:3000` adresinde çalışacaktır.
-
-### PostgreSQL Veritabanı Kurulumu
-
-PostgreSQL'i yüklü değilse:
-
-**Windows:**
-
-```bash
-# pgAdmin aracılığıyla veya psql kullanarak
-CREATE DATABASE sinavsistemi;
-```
-
-**Linux/Mac:**
-
-```bash
-psql
-CREATE DATABASE sinavsistemi;
-```
-
-### Frontend Kurulumu
-
-1. Frontend dizinine gidin:
-
-```bash
-cd frontend
-```
-
-2. Bağımlılıkları kurun:
-
-```bash
-npm install
-```
-
-3. Geliştirme sunucusunu başlatın:
-
-```bash
 npm start
-```
 
-Frontend `http://localhost:3000` adresinde çalışacaktır. (React server)
+Terminal 2 (Frontend Arayüzü):
+Bash
 
-## Gerekli Ports
+cd frontend
 
-- **Backend API**: `http://localhost:3000` (arka planda)
-- **Frontend**: `http://localhost:3000` (React dev server'ında çalışacaktır, port ayarlanabilir)
+npm install <------- (bağımlılıkları yükle)
 
-Eğer çakışma yaşıyorsanız, frontend'i farklı portta çalıştırabilirsiniz:
+npm start
 
-```bash
-PORT=3001 npm start
-```
 
-## API Endpoints
 
-### Authentication (`/api/auth`)
+3. Uygulamaya Erişim
 
-- `POST /register` - Yeni kullanıcı kaydı
-- `POST /login` - Kullanıcı girişi
-- `GET /profile` - Kullanıcı profilini getir (JWT gerekli)
+•	Ana Sayfa (Giriş Seçimi): http://localhost:3000
 
-## Kullanıcı Akışı
+•	Admin Paneli: http://localhost:3000/admin
 
-### Kayıt Olma
+•	Aday Sınav Ekranı: http://localhost:3000/exam
 
-1. `/register` sayfasına gidin
-2. Ad, soyadı, e-posta, şifresi ve rolü girin
-3. Kayıt ol düğmesine tıklayın
-4. Otomatik olarak giriş sayfasına yönlendirilirsiniz
+•	Backend API: http://localhost:5000
 
-### Giriş Yapma
+# Geliştirici Rehberi: API Yönetimi ve Entegrasyon (Cheat Sheet)
+Dış sistemlerin veya geliştiricilerin sisteme entegre olabilmesi için tasarlanan temel API Endpoint'leri aşağıda listelenmiştir:
 
-1. `/login` sayfasına gidin
-2. E-posta ve şifrenizi girin
-3. Giriş yap düğmesine tıklayın
-4. Başarılı girişten sonra Dashboard'a yönlendirilirsiniz
+1. Soru Yönetimi (CRUD İşlemleri):
+•	GET /api/questions : Tüm soruları listeler.
 
-### Dashboard
+•	POST /api/questions : Yeni soru ekler.
 
-- Rolünüze göre farklı paneller görsrsünüz
-- Çıkış Yap butonu ile oturumu sonlandırabilirsiniz
+•	PUT /api/questions/:id : Belirtilen soruyu günceller.
 
-## Kimlik Doğrulama Akışı
+•	DELETE /api/questions/:id : Belirtilen soruyu siler.
 
-1. Kullanıcı login yapar
-2. Backend JWT token üretir ve geri gönderir
-3. Token localStorage'da saklanır
-4. Her API isteği Authorization header'ında token gönderilir
-5. Backend token'ı doğrular ve işlemi yapılandırır
 
-## Yapılacak İşler (Gelecek)
+Örnek POST/PUT Body Payload:
+JSON
+{
+  "text": "Soru metni",
+  "options": ["Seçenek 1", "Seçenek 2", "Seçenek 3", "Seçenek 4"],
+  "correctAnswer": 0
+}
 
-- [ ] Sınav CRUD işlemleri
-- [ ] Sorular yönetimi
-- [ ] Sınav sonuçları ve raporlama
-- [ ] E-posta bildirimleri
-- [ ] Sınav takvimi
-- [ ] Kullanıcı yönetim paneli
-- [ ] Test coverage
-- [ ] Production build optimizasyonu
 
-## Sorun Giderme
+2. Sınav ve Değerlendirme Sistemi:
+•	POST /api/exams/submit : Öğrencinin cevaplarını gönderir ve AI analizini başlatır.
 
-### CORS Hatası
+•	GET /api/exams/history : Geçmiş sınav sonuçlarını ve AI raporlarını getirir.
 
-Backend'deki CORS ayarlarını kontrol edin. `main.ts` dosyasında frontend URL'i doğru şekilde konfigüre edilmiş olmalıdır.
 
-### Veritabanı bağlantı hatası
 
-- PostgreSQL'in çalışıyor olduğundan emin olun
-- `.env` dosyasındaki veritabanı bilgilerini kontrol edin
+Örnek Sınav Gönderim (Submit) Payload:
+JSON
+{
+  "answers": [
+    {
+      "questionId": "uuid-örnek-id-1234",
+      "selectedAnswer": 0
+    }
+  ]
+}
 
-### Port kullanımda
 
-- `lsof -i :3000` (Linux/Mac) - hangi proces port 3000'i kullanıyor kontrol edin
-- `netstat -ano | findstr :3000` (Windows) - kullanımdaki portu kontrol edin
+# Kullanıcı Rehberi (Nasıl Kullanılır?)
+Admin (Eğitmen) Olarak Soru Ekleme:
 
-## Geliştirme
+1.	Ana sayfadan "Admin Girişi" butonuna tıklayın.
+	
+3.	Yönetim panelinde soru metnini ve 4 farklı seçeneği ilgili kutulara girin.
+	
+5.	Doğru olan seçeneği işaretleyin ve "Ekle" butonuna basarak soruyu sisteme dahil edin.
+	
 
-### Backend
+Aday (Öğrenci) Olarak Sınava Katılma:
 
-Yeni module oluşturma:
+1.	Ana sayfadan "Aday Girişi" butonuna ve ardından "Sınava Başla" butonuna tıklayın.
 
-```bash
-nest generate module <module-name>
-```
+2.	Ekrana gelen sorularda doğru olduğunu düşündüğünüz şıkkı seçin. Önceki/Sonraki butonları ile sorular arasında gezinebilirsiniz.
+	
+3.	Tüm soruları tamamladığınızda "Sınavı Gönder" butonuna tıklayın. Saniyeler içinde yapay zeka analiziniz ve başarı puanınız ekranda belirecektir.
+	
 
-Yeni controller oluşturma:
+# Güvenlik ve Üretim Ortamı (Production) İyileştirmeleri
 
-```bash
-nest generate controller <controller-name>
-```
+Bu proje mevcut haliyle bir demostrasyon (PoC) altyapısına sahiptir. Kurumsal bir yapıya (Enterprise) geçiş yapmak ve projeyi canlıya (Production) almak için aşağıdaki mimari geliştirmelerin yapılması hedeflenmektedir:
 
-### Frontend
+•	Kimlik Doğrulama & Yetkilendirme: Admin ve Öğrenci girişleri için JWT (JSON Web Token) tabanlı güvenli oturum yönetimi eklenmelidir.
 
-Yeni bileşen oluşturma:
+•	Kalıcı Veri Katmanı: Mevcut JSON tabanlı geçici depolama mimarisi yerine, PostgreSQL veya MongoDB gibi kurumsal düzeyde bir ilişkisel/doküman veri tabanına geçilmelidir.
 
-```bash
-# src/components/ klasöründe ComponentName.jsx dosyası oluşturun
-```
-
-## Lisans
-
-Bu proje eğitim amaçlı geliştirilmiştir.
+•	Hizmet Sürekliliği ve Güvenlik: Kötü niyetli API isteklerini engellemek için Rate Limiting, sunucu taraflı CORS kısıtlamaları ve iletişimin şifrelenmesi için HTTPS/SSL sertifikaları yapılandırılmalıdır.
