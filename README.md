@@ -29,7 +29,6 @@ Bu proje, yapay zeka (Ollama API) entegrasyonu ile geliştirilen, çoktan seçme
 
 •	Dinamik Soru Yönetimi: Admin panelinden saniyeler içinde yeni sorular eklenebilir, mevcut soruların metinleri veya doğru cevapları düzenlenebilir. Değişiklikler anında sisteme yansır.
 
-•	Raporlama: Öğrenci sınavı bitirdiği an, herhangi bir bekleme süresi olmadan başarı oranı (Puan / Toplam Soru) ve AI analiz raporu ekranda oluşturulur.
 
 
 
