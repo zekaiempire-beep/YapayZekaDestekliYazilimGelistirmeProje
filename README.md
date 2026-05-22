@@ -3,7 +3,7 @@
 Bu proje, yapay zeka (Ollama API) entegrasyonu ile geliştirilen, çoktan seçmeli sınav süreçlerini otomatize eden ve kullanıcılara anında kişiselleştirilmiş geri bildirim sunan modern bir web uygulamasıdır. Temiz kod prensipleri ve istemci-sunucu mimarisine sadık kalınarak hem eğitmenler hem de öğrenciler için hızlı, kesintisiz ve eğitici bir deneyim hedeflenmiştir. 
 
 # Kullanılan Teknolojiler
-•	Backend: NestJS, Node.js, REST API
+•	Backend: NestJS, Node.js, REST API, TypeORM, Axios.
 
 •	Frontend: React, Next.js, Tailwind CSS
 
