@@ -194,14 +194,21 @@ PORT=3001 npm start
 
 ## Yapılacak İşler (Gelecek)
 
-- [ ] Sınav CRUD işlemleri
-- [ ] Sorular yönetimi
-- [ ] Sınav sonuçları ve raporlama
-- [ ] E-posta bildirimleri
-- [ ] Sınav takvimi
-- [ ] Kullanıcı yönetim paneli
-- [ ] Test coverage
-- [ ] Production build optimizasyonu
+Eksikler ve Öneriler
+
+-> (Erişilebilirlik )Öğrenci kayıt olduktan sonra bir öğrenci numarası atanabilir. Böylelikle öğrenci işlemleri konusunda kolaylık sağlar.
+
+-> (Erişilebilirlik) Sınav sonuçları yayınlandıktan sonra sınav yayınlanma tarihi gösterilebilir
+
+-> (Erişilebilirlik) Öğrenciye açıklama notu yazıldıktan sonra 'Değerlendirildi' gibi bir durum ifadesi eklenebilir ve sınav sonuçlarını yayınlama konusunda kolaylık sağlandırtabilir
+
+-> (Erişilebilirlik) Kullanıcıları Yönet kısmına detaylı özellikler eklenebilir. (öğrenciye tıklayınca ortalamasını görüntüleme, hangi sınavlara girdiği vs. vs. gibi bilgiler)
+
+-> (UI) Admin için onay bekleyen sınav varsa bildirim gözükebilir.
+
+-> (UI) Öğrenci sonuçlarını görüntüleme ekranı güzelleştirilebilir, sayfa sayfa geçsin gibi. Aynı şekilde Admin de.
+
+-> Personel review yapılabilir
 
 ## Sorun Giderme
 
@@ -212,6 +219,9 @@ Backend'deki CORS ayarlarını kontrol edin. `main.ts` dosyasında frontend URL'
 ### Veritabanı bağlantı hatası
 
 - PostgreSQL'in çalışıyor olduğundan emin olun
+kullanıcı adı: postgres
+şifre: postgres
+- 
 - `.env` dosyasındaki veritabanı bilgilerini kontrol edin
 
 ### Port kullanımda
@@ -219,30 +229,9 @@ Backend'deki CORS ayarlarını kontrol edin. `main.ts` dosyasında frontend URL'
 - `lsof -i :3000` (Linux/Mac) - hangi proces port 3000'i kullanıyor kontrol edin
 - `netstat -ano | findstr :3000` (Windows) - kullanımdaki portu kontrol edin
 
-## Geliştirme
 
-### Backend
 
-Yeni module oluşturma:
 
-```bash
-nest generate module <module-name>
-```
 
-Yeni controller oluşturma:
 
-```bash
-nest generate controller <controller-name>
-```
 
-### Frontend
-
-Yeni bileşen oluşturma:
-
-```bash
-# src/components/ klasöründe ComponentName.jsx dosyası oluşturun
-```
-
-## Lisans
-
-Bu proje eğitim amaçlı geliştirilmiştir.
